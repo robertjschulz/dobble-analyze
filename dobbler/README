@@ -1,0 +1,14 @@
+Sample readme file for dobbler project.
+
+
+initializing the workspace....
+
+$ libtoolize --force
+$ aclocal
+$ autoheader
+$ automake --force-missing --add-missing
+$ autoconf
+$ ./configure
+
+
+(see: http://askubuntu.com/questions/27677/cannot-find-install-sh-install-sh-or-shtool-in-ac-aux )
