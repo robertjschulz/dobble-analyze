@@ -1,0 +1,26 @@
+
+
+2012-01-15
+  - Ausgabe des CDobbleCardSet um die "Matrixdarstellung" (jeweils Differenz anzeigen) erweitert nd formatiert 
+    (war nötig, um einen Fehler im dTest/Matrixerstellung zu finden)
+  - Ausgabe von maximal erfolgreichen Lösungen zu jedem n werden beim random-test in txt-Dateien gespeichert.  
+  - Optimierung der m_aus_n-Funktion mit Cache --> ~ Faktor 3 schneller bei n=7 Random-Tester  
+    ( dobble -n 7 -p 2 try-random )
+  CUTE - Test-Projekt hinzugefügt
+  - Test für fak-Berechnung
+  
+  Arbeit am Random-Tester:
+  - Bijektivität der Nummern-Karten-Umwandlung mit CUTE-Lauf bis n=8 getestet
+  - Vollständigkeit der erzeugten Kartenmenge bei Nummern-Karten-Umwandlung getestet durch Vergleich mit der rekursiven Befüllung bis n=7 (darüber allocation-Exceptions!)
+   
+  Lösungsstand:
+  - Randomtester mit n=6 trivial schnell, n=7 bringt bisher maximal 25 statt der erwarteten 43 (nach mehreren Nächten Laufen...)
+  - Matrixcheck:
+    + bringt schnell ein Ergebnis: dtest -n 5    
+    + aktueller Test von n=6 : dtest -n 6 2>&1 | grep --color=auto 'n=[34567]'
+      läuft schon Nächte, ohne n=2 zu überspringen (--> glaube an einen Programmfehler)    
+    + ältere Programmversion mit n=7
+      dtest 2>&1 | grep --color=auto 'n=[34567]'
+      läuft schon Nächte, hat immerhin schon mal n=2 zu übersprungen (--> glaube an einen Programmfehler)    
+
+     
