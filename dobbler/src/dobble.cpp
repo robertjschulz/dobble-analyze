@@ -36,6 +36,17 @@ void analyze( int n , int k)
 }
 
 
+
+void tryAll(int n, int prework)
+{
+  CDobbleCardSet set(n);
+  for(int pw=1; pw <= prework; pw++)
+    {
+      set.construct_part(pw);
+    }
+  set.checkAllCombinations();
+}
+
 void tryRandom(int n, int prework)
 {
   srand(time(NULL));
@@ -200,12 +211,17 @@ int main(int argc, char *argv[])
               testConstruct(n);
               exit(EXIT_SUCCESS);
             }
-          if(cmd=="try-random")
+          else if(cmd=="try-random")
             {
               tryRandom(n, prework);
               exit(EXIT_SUCCESS);
             }
-          if(cmd=="test")
+          else if(cmd=="try-all")
+            {
+              tryAll(n, prework);
+              exit(EXIT_SUCCESS);
+            }
+          else if(cmd=="test")
             {
               CDobbleCardSet set(n);
               set.clear();

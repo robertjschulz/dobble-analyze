@@ -1,5 +1,29 @@
 
 
+2012-01-19
+  - added linking of gsl and ntl
+  - added doble parameter try-all which uses gsl_combinations_next to iterate through all combinations and test each card combi...
+    takes endless....
+    
+    example call:
+    
+    rosa@robert-desktop:~/pub/Robert/workspace/dobbler$ ./src/dobble -n 3 -p 2 try-all
+	option n with value '3'
+	option p with value '2'
+	non-option ARGV-elements: try-all 
+	summary for n[7] k[3]  used symbols   : 7/7 number of cards: 7 check: 1
+	card nr.  1:   1   2   3
+	card nr.  2:   1   4   5
+	card nr.  3:   1   6   7
+	card nr.  4:   2   4   6
+	card nr.  5:   2   5   7
+	card nr.  6:   3   4   7
+	card nr.  7:   3   5   6
+	got a maximal good solution! Exiting...
+
+  - other code (dtest) may be broken for now...    
+
+
 2012-01-15
   - Ausgabe des CDobbleCardSet um die "Matrixdarstellung" (jeweils Differenz anzeigen) erweitert nd formatiert 
     (war nötig, um einen Fehler im dTest/Matrixerstellung zu finden)

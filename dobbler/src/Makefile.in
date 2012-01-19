@@ -52,7 +52,8 @@ am_dobble_OBJECTS = dobble.$(OBJEXT) CDobbleCardSet.$(OBJEXT) \
 	CCard.$(OBJEXT)
 dobble_OBJECTS = $(am_dobble_OBJECTS)
 dobble_LDADD = $(LDADD)
-am_dtest_OBJECTS = CMatrixSolver.$(OBJEXT) dtest.$(OBJEXT)
+am_dtest_OBJECTS = CMatrixSolver.$(OBJEXT) dtest.$(OBJEXT) \
+	CPermutation.$(OBJEXT) CDerangementTree.$(OBJEXT)
 dtest_OBJECTS = $(am_dtest_OBJECTS)
 dtest_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -99,7 +100,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
-LIBS = @LIBS@
+LIBS = -lntl -lgsl -lgslcblas
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
@@ -173,8 +174,9 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-dobble_SOURCES = dobble.cpp CDobbleCardSet.cpp CCard.cpp
-dtest_SOURCES = CMatrixSolver.cpp test/dtest.cpp
+dobble_SOURCES = dobble.cpp CDobbleCardSet.cpp CCard.cpp  
+dtest_SOURCES = CMatrixSolver.cpp test/dtest.cpp CPermutation.cpp CDerangementTree.cpp
+AM_LDFLAGS = 
 all: all-am
 
 .SUFFIXES:
@@ -260,8 +262,10 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CCard.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CDerangementTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CDobbleCardSet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CMatrixSolver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CPermutation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dobble.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dtest.Po@am__quote@
 

@@ -52,7 +52,8 @@ am_dobble_OBJECTS = dobble.$(OBJEXT) CDobbleCardSet.$(OBJEXT) \
 	CCard.$(OBJEXT)
 dobble_OBJECTS = $(am_dobble_OBJECTS)
 dobble_LDADD = $(LDADD)
-am_dtest_OBJECTS = CMatrixSolver.$(OBJEXT) dtest.$(OBJEXT)
+am_dtest_OBJECTS = CMatrixSolver.$(OBJEXT) dtest.$(OBJEXT) \
+	CPermutation.$(OBJEXT) CDerangementTree.$(OBJEXT)
 dtest_OBJECTS = $(am_dtest_OBJECTS)
 dtest_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
@@ -99,7 +100,7 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
-LIBS = -lntl 
+LIBS = -lntl -lgsl -lgslcblas
 LN_S = ln -s
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /home/rosa/pub/Robert/workspace/dobbler/missing --run makeinfo
@@ -173,8 +174,9 @@ target_vendor = unknown
 top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
-dobble_SOURCES = dobble.cpp CDobbleCardSet.cpp CCard.cpp
-dtest_SOURCES = CMatrixSolver.cpp test/dtest.cpp
+dobble_SOURCES = dobble.cpp CDobbleCardSet.cpp CCard.cpp  
+dtest_SOURCES = CMatrixSolver.cpp test/dtest.cpp CPermutation.cpp CDerangementTree.cpp
+AM_LDFLAGS = 
 all: all-am
 
 .SUFFIXES:
@@ -260,8 +262,10 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/CCard.Po
+include ./$(DEPDIR)/CDerangementTree.Po
 include ./$(DEPDIR)/CDobbleCardSet.Po
 include ./$(DEPDIR)/CMatrixSolver.Po
+include ./$(DEPDIR)/CPermutation.Po
 include ./$(DEPDIR)/dobble.Po
 include ./$(DEPDIR)/dtest.Po
 

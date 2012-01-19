@@ -10,6 +10,8 @@
 #include <map>
 #include <ostream>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <assert.h>
 
 #include "CDobbleCardSet.h"
@@ -160,6 +162,15 @@ bool CDobbleCardSet::fits(const CCard & _card)
   for(tcards::iterator it=cards.begin(); it != cards.end(); it++)
     {
       if(! it->fits(_card)) return false;
+    }
+  return true;
+}
+
+bool CDobbleCardSet::fits(gsl_combination_struct *candidate)
+{
+  for(tcards::iterator it=cards.begin(); it != cards.end(); it++)
+    {
+      if(! it->fits(candidate)) return false;
     }
   return true;
 }
@@ -542,6 +553,77 @@ void CDobbleCardSet::random()
 {
 //  randomByshuffledCards();
   randomByshuffledCardNumbers();
+}
+
+void CDobbleCardSet::checkAllCombinations()
+{
+  m_best_size = 0;
+  gsl_combination_struct *c = gsl_combination_calloc(s,n);
+  checkLeftCombinations(c, true);
+  free (c);
+}
+
+void CDobbleCardSet::checkLeftCombinations(gsl_combination_struct *c, bool first)
+{
+  int loopnr=1;
+  if(first)
+    {
+      m_current_iteration_number = 0;
+      m_max_iteration_number     = getMaxNumOfDifferentCard();
+    }
+  int cards_size = cards.size();
+  // cout << "DEBUG: checkLeftCombinations() started with cards_size=" << cards_size << "..." << endl;
+  gsl_combination_struct *copy = gsl_combination_alloc(s,n);
+  do {
+      if(first) m_current_iteration_number++;
+      CCard card = CCard(c);
+      if(fits(c))
+        {
+          gsl_combination_memcpy(copy, c);
+          if(gsl_combination_next(copy) == GSL_SUCCESS)
+            {
+              // doen't matter here!
+            }
+          cards.push_back(card);
+//          cout << "     fitting card: " << card << endl;
+          checkLeftCombinations(copy);
+          cards.pop_back();
+        }
+      else
+        {
+//          cout << " not fitting card: " << card << endl;
+        }
+  } while (gsl_combination_next(c) == GSL_SUCCESS);
+//  cout << "reached end with " << cards_size << " cards"
+//      << " at main loop = " << m_current_iteration_number << "/" << m_max_iteration_number << endl;
+  if(cards_size > m_best_size)
+    {
+      printSummary(cout);
+      listCards(cout);
+      saveSummary();
+      m_best_size = cards.size() ;
+    }
+  if(cards_size == s)
+    {
+      cout << "got a maximal good solution! Exiting..." << endl;
+      exit (0);
+    }
+  free(copy);
+}
+
+void CDobbleCardSet::saveSummary()
+{
+  int foundCards = cards.size();
+  stringstream sb;
+  sb << "dobble_solution_n_" << n
+      << "_symbols_" << getNumUsedSymbols() << "_von_" << s
+      << "_cards_" << foundCards << "_von_" << s
+      << ".txt";
+  string filename = sb.str();
+  fstream f(filename.c_str(), ios_base::out);
+  printSummary(f);
+  listCards(f, n);
+  f.close();
 }
 
 int CDobbleCardSet::createVectorWithAllNumbers(vector<int> & all_card_numbers)

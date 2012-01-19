@@ -1,0 +1,7 @@
+summary for n[7] k[3]  used symbols   : 7/7 number of cards: 6 check: 1
+card nr.  1:   1   2   3 | 
+card nr.  2:   1   4   5 | 
+card nr.  3:   1   6   7 | 
+card nr.  4:   2   4   6 |    0   0
+card nr.  5:   2   5   7 |    1   1
+card nr.  6:   3   5   6 |    1   0

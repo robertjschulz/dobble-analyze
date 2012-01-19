@@ -13,6 +13,9 @@
 #include <list>
 #include <utility>
 #include <iostream>
+#include <stdexcept>
+
+#include "CPermutation.h"
 
 using namespace std;
 
@@ -112,6 +115,278 @@ bool CMatrixSolver::checkN(int n)
   return ok;
 }
 
+
+bool CMatrixSolver::tryValues(int i, int n, int x, int y)
+{
+  CNref & nref = nrefs.at(n);
+
+  // an der Stelle n,x,y die Werte v durch probieren
+  for(int v=0; v< m_n; v++)
+    {
+      bool ok = true;
+      // check vertically
+      for(int _y = 0; _y < y; _y++)
+        {
+          if(getValue(n,x,_y) == v)
+            {
+              if(m_debug)
+                {
+                  cerr << "failed vertically in line " << __LINE__ << " for i=" << i << " v=" << v << " in line " << __LINE__ << " at this point:" << endl;
+                  print(cerr);
+                }
+
+              ok=false;
+              break; // next v
+            }
+        }
+      if(ok)
+        {
+          // check horizontally
+          for(int _x = 0; _x < x; _x++)
+            {
+              if(getValue(n,_x,y) == v)
+                {
+                  if(m_debug)
+                    {
+                      cerr << "failed horizontally in line " << __LINE__ << " for i=" << i << " v=" << v << " in line " << __LINE__ << " at this point:" << endl;
+                      print(cerr);
+                    }
+                  ok=false;
+                  break;
+                }
+            }
+        }
+      if(ok)
+        {
+          // check against previous N
+          list<pair<CRef*,int> > undoCache;
+          for(int _n = n-1; _n > 0; _n--)
+            {
+              CRef & ref = nref.at(y, _n);
+              ok = false;
+              for(int _y=0; _y < m_n; _y++)
+                {
+                  if(getValue(_n, x, _y) == v)
+                    {
+                      if(ref.matchingLines.count(_y) == 0)
+                        {
+                          ref.matchingLines.insert(_y);
+                          ref.vacantLines.erase(_y);
+                          undoCache.push_back(make_pair(& ref, _y));
+                          ok = true;
+                          break; // for y_
+                          //                          cerr << "DEBUG: adding " << _y << " to matchingLine set." << endl;
+                        }
+                      else
+                        {
+                          //                          cerr << "failed in line " << __LINE__ << " at this point:" << endl;
+                          //                          print (cerr);
+                        }
+                    }
+                }
+              if(!ok) break; //for _n
+            }
+          if(ok)
+            {
+              setValue(n, x, y, v);
+              ok = recursiveSolver(i+1);
+              if(ok) return true;
+            }
+
+          if(m_debug)
+            {
+              cerr << "failed in plane-Refs in line " << __LINE__ << " for i=" << i << " v=" << v << " in line " << __LINE__ << " at this point:" << endl;
+              print(cerr);
+            }
+
+          // undo and try next...
+          for(list<pair<CRef*,int> >::iterator it=undoCache.begin(); it!=undoCache.end(); it++)
+            {
+              CRef & ref = *(it->first);
+              int _y = it->second;
+              ref.matchingLines.erase(_y);
+              ref.vacantLines.insert(_y);
+            }
+          setValue(n, x, y, -1);
+
+          // ok = checkN(n,x,y);
+        }
+    }
+
+  if(m_debug)
+    {
+      //      if(x==0 && y==0 && n >= m_n-3)
+      cerr << "DEBUG: recursiveSolver(i=" << i << " -->"
+          << " n=" << n
+          << ", x=" << x
+          << ", y=" << y
+          << ") returns false" << endl;
+      //          print(cerr, n-1);
+    }
+  return false;
+}
+
+// initializes the References to the previous planes with smaller n
+void CMatrixSolver::initNref(int n)
+{
+    //          cerr << "DEBUG: recursiveSolver(i=" << i << " -->"
+    //              << " n=" << n
+    //              << "...)" << endl;
+    // initialize THIS planes nref
+    CNref & nref = nrefs.at(n);
+    for(int _y = 0;_y < m_n;_y++)
+        for(int _n = n - 1;_n > 0;_n--){
+            nref.at(_y, _n).init(m_n);
+        }
+
+}
+
+void CMatrixSolver::throwError(const std::string & s)
+{
+  cerr << "failed with message: " << s << endl;
+  print(cerr);
+  throw runtime_error(s);
+}
+
+bool isDegradation(const list<gsl_permutation> & degradationsAbove, CPermutation & p)
+{
+  for(int i=0; i< p.s.size; i++)
+    {
+      int vali = gsl_permutation_get(&(p.s), i);
+      for(list<gsl_permutation>::const_iterator it=degradationsAbove.begin();
+          it != degradationsAbove.end(); it++)
+        {
+          if( gsl_permutation_get(&(*it), i) ==vali) return false;
+        }
+    }
+  return true;
+}
+
+bool CMatrixSolver::tryDegradation(int i, int n, int x, int y)
+{
+  if(x==0) throwError("wromng state: x MUST NOT be 0!");
+
+  CNref & nref = nrefs.at(n);
+
+  list<gsl_permutation> degradationsAbove;
+  // an der Stelle n,y die horizontalen Permutationen / Degradierungen durchgehen
+  CPermutation p(m_n);
+  do {
+      if(isDegradation(degradationsAbove, p))
+        {
+          // TODO:
+        }
+  } while(gsl_permutation_next(&(p.s)));
+
+  if(y==0)
+    {
+      ;
+    }
+  for(int v=0; v< m_n; v++)
+    {
+      bool ok = true;
+      // check vertically
+      for(int _y = 0; _y < y; _y++)
+        {
+          if(getValue(n,x,_y) == v)
+            {
+              if(m_debug)
+                {
+                  cerr << "failed vertically in line " << __LINE__ << " for i=" << i << " v=" << v << " in line " << __LINE__ << " at this point:" << endl;
+                  print(cerr);
+                }
+
+              ok=false;
+              break; // next v
+            }
+        }
+      if(ok)
+        {
+          // check horizontally
+          for(int _x = 0; _x < x; _x++)
+            {
+              if(getValue(n,_x,y) == v)
+                {
+                  if(m_debug)
+                    {
+                      cerr << "failed horizontally in line " << __LINE__ << " for i=" << i << " v=" << v << " in line " << __LINE__ << " at this point:" << endl;
+                      print(cerr);
+                    }
+                  ok=false;
+                  break;
+                }
+            }
+        }
+      if(ok)
+        {
+          // check against previous N
+          list<pair<CRef*,int> > undoCache;
+          for(int _n = n-1; _n > 0; _n--)
+            {
+              CRef & ref = nref.at(y, _n);
+              ok = false;
+              for(int _y=0; _y < m_n; _y++)
+                {
+                  if(getValue(_n, x, _y) == v)
+                    {
+                      if(ref.matchingLines.count(_y) == 0)
+                        {
+                          ref.matchingLines.insert(_y);
+                          ref.vacantLines.erase(_y);
+                          undoCache.push_back(make_pair(& ref, _y));
+                          ok = true;
+                          break; // for y_
+                          //                          cerr << "DEBUG: adding " << _y << " to matchingLine set." << endl;
+                        }
+                      else
+                        {
+                          //                          cerr << "failed in line " << __LINE__ << " at this point:" << endl;
+                          //                          print (cerr);
+                        }
+                    }
+                }
+              if(!ok) break; //for _n
+            }
+          if(ok)
+            {
+              setValue(n, x, y, v);
+              ok = recursiveSolver(i+1);
+              if(ok) return true;
+            }
+
+          if(m_debug)
+            {
+              cerr << "failed in plane-Refs in line " << __LINE__ << " for i=" << i << " v=" << v << " in line " << __LINE__ << " at this point:" << endl;
+              print(cerr);
+            }
+
+          // undo and try next...
+          for(list<pair<CRef*,int> >::iterator it=undoCache.begin(); it!=undoCache.end(); it++)
+            {
+              CRef & ref = *(it->first);
+              int _y = it->second;
+              ref.matchingLines.erase(_y);
+              ref.vacantLines.insert(_y);
+            }
+          setValue(n, x, y, -1);
+
+          // ok = checkN(n,x,y);
+        }
+    }
+
+  if(m_debug)
+    {
+      //      if(x==0 && y==0 && n >= m_n-3)
+      cerr << "DEBUG: recursiveSolver(i=" << i << " -->"
+          << " n=" << n
+          << ", x=" << x
+          << ", y=" << y
+          << ") returns false" << endl;
+      //          print(cerr, n-1);
+    }
+  return false;
+}
+
 bool CMatrixSolver::recursiveSolver(int i)
 {
 //  cerr << "DEBUG: recursiveSolver(i=" << i << ")" << endl;
@@ -122,35 +397,7 @@ bool CMatrixSolver::recursiveSolver(int i)
   if(i == max_i)
     {
       n=m_n;
-    }
-  else
-    {
-      getCoords(i,n,x,y);
-      cerr << "DEBUG: recursiveSolver(i=" << i << " -->"
-          << " n=" << n
-          << ", x=" << x
-          << ", y=" << y
-          << ")" << endl;
-    }
-
-  bool ok = true;
-
-  if(i == max_i || ( x==0 && y==0) )
-    {
-      ok = checkN(n-1);
-      // cerr << "DEBUG: checkN(n=" << n << ") returned:" << (ok?"true":"false") << endl;
-      if(ok)
-        {
-        }
-      else
-        {
-          cerr << "DEBUG: checkN(n=" << n << ") unexpectedly returned:" << (ok?"true":"false") << endl;
-          print(cerr, n);
-        }
-    }
-
-  if(i == max_i)
-    {
+      bool ok = checkN(n-1);
       if(ok)
         {
           cout << "SOLUTION FOUND:" << endl;
@@ -160,7 +407,30 @@ bool CMatrixSolver::recursiveSolver(int i)
       return ok;
     }
 
-  if(!ok) return false;
+  getCoords(i,n,x,y);
+  cerr << "DEBUG: recursiveSolver(i=" << i << " -->"
+      << " n=" << n
+      << ", x=" << x
+      << ", y=" << y
+      << ")" << endl;
+
+  bool ok = true;
+
+//  if(( x==0 && y==0) )
+//    {
+//      ok = checkN(n-1);
+//      // cerr << "DEBUG: checkN(n=" << n << ") returned:" << (ok?"true":"false") << endl;
+//      if(ok)
+//        {
+//        }
+//      else
+//        {
+//          cerr << "DEBUG: checkN(n=" << n << ") unexpectedly returned:" << (ok?"true":"false") << endl;
+//          print(cerr, n);
+//        }
+//    }
+//
+//  if(!ok) return false;
 
   if(n==0)
     {
@@ -187,6 +457,7 @@ bool CMatrixSolver::recursiveSolver(int i)
     }
   else
     {
+      if(x != 0) throw runtime_error("x != 0");
       if ( x==0 && y==0)
         {
 //          cerr << "DEBUG: recursiveSolver(i=" << i << " -->"
@@ -194,119 +465,10 @@ bool CMatrixSolver::recursiveSolver(int i)
 //              << "...)" << endl;
 
           // initialize THIS planes nref
-          CNref & nref = nrefs.at(n);
-          for(int _y = 0; _y < m_n; _y++)
-            for(int _n = n-1; _n > 0; _n--)
-              {
-                nref.at(_y, _n).init(m_n);
-              }
-        }
-      CNref & nref = nrefs.at(n);
-
-      // an der Stelle n,x,y die Werte v durch probieren
-      for(int v=0; v< m_n; v++)
-        {
-          ok = true;
-          // check vertically
-          for(int _y = 0; _y < y; _y++)
-            {
-              if(getValue(n,x,_y) == v)
-                {
-                  if(m_debug)
-                    {
-                      cerr << "failed vertically in line " << __LINE__ << " for i=" << i << " v=" << v << " in line " << __LINE__ << " at this point:" << endl;
-                      print(cerr);
-                    }
-
-                  ok=false;
-                  break; // next v
-                }
-            }
-          if(ok)
-            {
-              // check horizontally
-              for(int _x = 0; _x < x; _x++)
-                {
-                  if(getValue(n,_x,y) == v)
-                    {
-                      if(m_debug)
-                        {
-                          cerr << "failed horizontally in line " << __LINE__ << " for i=" << i << " v=" << v << " in line " << __LINE__ << " at this point:" << endl;
-                          print(cerr);
-                        }
-                      ok=false;
-                      break;
-                    }
-                }
-            }
-          if(ok)
-            {
-              // check against previous N
-              list<pair<CRef*,int> > undoCache;
-              for(int _n = n-1; _n > 0; _n--)
-                {
-                  CRef & ref = nref.at(y, _n);
-                  ok = false;
-                  for(int _y=0; _y < m_n; _y++)
-                    {
-                      if(getValue(_n, x, _y) == v)
-                        {
-                          if(ref.matchingLines.count(_y) == 0)
-                            {
-                              ref.matchingLines.insert(_y);
-                              ref.vacantLines.erase(_y);
-                              undoCache.push_back(make_pair(& ref, _y));
-                              ok = true;
-                              break; // for y_
-    //                          cerr << "DEBUG: adding " << _y << " to matchingLine set." << endl;
-                            }
-                          else
-                            {
-    //                          cerr << "failed in line " << __LINE__ << " at this point:" << endl;
-    //                          print (cerr);
-                            }
-                        }
-                    }
-                  if(!ok) break; //for _n
-                }
-              if(ok)
-                {
-                  setValue(n, x, y, v);
-                  ok = recursiveSolver(i+1);
-                  if(ok) return true;
-                }
-
-              if(m_debug)
-                {
-                  cerr << "failed in plane-Refs in line " << __LINE__ << " for i=" << i << " v=" << v << " in line " << __LINE__ << " at this point:" << endl;
-                  print(cerr);
-                }
-
-              // undo and try next...
-              for(list<pair<CRef*,int> >::iterator it=undoCache.begin(); it!=undoCache.end(); it++)
-                {
-                  CRef & ref = *(it->first);
-                  int _y = it->second;
-                  ref.matchingLines.erase(_y);
-                  ref.vacantLines.insert(_y);
-                }
-              setValue(n, x, y, -1);
-
-              // ok = checkN(n,x,y);
-            }
+            initNref(n);
         }
 
-        if(m_debug)
-        {
-//      if(x==0 && y==0 && n >= m_n-3)
-          cerr << "DEBUG: recursiveSolver(i=" << i << " -->"
-              << " n=" << n
-              << ", x=" << x
-              << ", y=" << y
-              << ") returns false" << endl;
-//          print(cerr, n-1);
-        }
-      return false;
+      return tryValues(i, n, x, y);
     }
 //  cerr << "DEBUG: recursiveSolver(i=" << i << ") returns " << (ok?"true":"false") << endl;
 

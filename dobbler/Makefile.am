@@ -1,3 +1,4 @@
 SUBDIRS=src
-LDFLAGS=-lntl
-#LIBS=ntl
+AM_LDFLAGS=-lntl -lgsl -lgslcblas
+
+#LIBS=ntl gsl

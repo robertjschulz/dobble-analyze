@@ -46,6 +46,14 @@ void CCard::remove(int s)
   symbols.erase(s);
 }
 
+CCard::CCard(gsl_combination_struct *src)
+{
+  for(int i=0; i< src->k; i++)
+    {
+      symbols.insert(gsl_combination_get(src, i)+1);
+    }
+}
+
 int CCard::countSames(const CCard & _card)
 {
     tsymbols::iterator it1 = symbols.begin();
@@ -92,6 +100,29 @@ bool CCard::fits(const CCard & _card)
               it1++;
               it2++;
           }
+    }
+  return(count == 1);
+}
+
+bool CCard::fits(gsl_combination_struct *candidate)
+{
+  assert(symbols.size() == candidate->k );
+  tsymbols::iterator it1 = symbols.begin();
+  int i = 0;
+  int count = 0;
+  while(count <= 1 && it1 != symbols.end() && i < candidate->k)
+    {
+      size_t v2 = gsl_combination_get(candidate, i)+1;
+      if(*it1 < v2)
+        it1++;
+      else if(*it1 > v2)
+        i++;
+      else // if(*it1 == v2)
+        {
+          count++;
+          it1++;
+          i++;
+        }
     }
   return(count == 1);
 }

@@ -69,6 +69,7 @@ public:
   ~CMatrixSolver();
 
   bool solve(int n);
+
   void print(std::ostream& o, int max_n=-1);
   bool m_debug;
 
@@ -83,6 +84,7 @@ private:
   std::vector<CNref > nrefs;
 
   static const int EMPTY;
+    void initNref(int n);
 
   size_t getIndex(int N, int x, int y);
   void getCoords(int index, int & n, int & x, int & y);
@@ -92,10 +94,16 @@ private:
 
   bool checkN(int n);
 
-  void init(int n);
+  bool tryValues(int i, int n, int x, int y);
+  bool tryDegradation(int i, int n, int x, int y);
 
 //  bool check();
   bool recursiveSolver(int i);
+
+  void init(int n);
+
+
+  void throwError(const std::string & s);
 };
 
 #endif /* CMATRIXSOLVER_H_ */

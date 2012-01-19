@@ -11,6 +11,7 @@
 #include <set>
 #include <ostream>
 #include <list>
+#include <gsl/gsl_combination.h>
 
 class CCard
 {
@@ -22,6 +23,7 @@ public:
 public:
   CCard();
   CCard(const CCard & src):symbols(src.symbols){};
+  CCard(gsl_combination_struct * src);
   virtual
   ~CCard();
 
@@ -30,6 +32,7 @@ public:
   void remove(int s);
 
   bool fits(const CCard & _card);
+  bool fits(gsl_combination_struct *candidate);
 
   bool conflicts(std::list<CCard>::iterator start, std::list<CCard>::iterator end);
 

@@ -130,9 +130,9 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-LDFLAGS = -lntl
+LDFLAGS = 
 LIBOBJS = 
-LIBS = -lntl 
+LIBS = 
 LN_S = ln -s
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /home/rosa/pub/Robert/workspace/dobbler/missing --run makeinfo
@@ -207,6 +207,7 @@ top_build_prefix =
 top_builddir = .
 top_srcdir = .
 SUBDIRS = src
+AM_LDFLAGS = -lntl -lgsl -lgslcblas
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -690,7 +691,8 @@ uninstall-am:
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am
 
-#LIBS=ntl
+
+#LIBS=ntl gsl
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

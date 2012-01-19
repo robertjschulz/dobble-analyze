@@ -4539,9 +4539,9 @@ fi
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lntl':
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lntl" >&5
-$as_echo_n "checking for main in -lntl... " >&6; }
-if ${ac_cv_lib_ntl_main+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsl in -lntl" >&5
+$as_echo_n "checking for gsl in -lntl... " >&6; }
+if ${ac_cv_lib_ntl_gsl+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -4549,33 +4549,34 @@ LIBS="-lntl  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gsl ();
 int
 main ()
 {
-return main ();
+return gsl ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_ntl_main=yes
+  ac_cv_lib_ntl_gsl=yes
 else
-  ac_cv_lib_ntl_main=no
+  ac_cv_lib_ntl_gsl=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ntl_main" >&5
-$as_echo "$ac_cv_lib_ntl_main" >&6; }
-if test "x$ac_cv_lib_ntl_main" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBNTL 1
-_ACEOF
-
-  LIBS="-lntl $LIBS"
-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ntl_gsl" >&5
+$as_echo "$ac_cv_lib_ntl_gsl" >&6; }
+if test "x$ac_cv_lib_ntl_gsl" = xyes; then :
+  main
 fi
 
 
