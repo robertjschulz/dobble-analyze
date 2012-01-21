@@ -38,7 +38,6 @@ public:
     r = r / 60;
     int h = r;
 
-
     ss.flags ( ios::right  );
     ss.width(2);
     ss.fill('0');

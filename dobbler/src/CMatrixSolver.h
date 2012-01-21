@@ -11,6 +11,7 @@
 #include <ostream>
 #include <vector>
 #include <set>
+#include <gsl/gsl_permutation.h>
 
 template<class C>
 class MultiDimensionalArray
@@ -71,6 +72,7 @@ public:
   bool solve(int n);
 
   void print(std::ostream& o, int max_n=-1);
+  void print(std::ostream& o, int min_n, int max_n);
   bool m_debug;
 
 private:
@@ -84,7 +86,7 @@ private:
   std::vector<CNref > nrefs;
 
   static const int EMPTY;
-    void initNref(int n);
+  void initNref(int n);
 
   size_t getIndex(int N, int x, int y);
   void getCoords(int index, int & n, int & x, int & y);
@@ -92,10 +94,19 @@ private:
   int getValue(int N, int x, int y);
   void setValue(int N, int x, int y, int v);
 
+  bool checkNline(int n, int y);
+  bool checkNlineSmall (int n, int y);
+
   bool checkN(int n);
 
   bool tryValues(int i, int n, int x, int y);
-  bool tryDegradation(int i, int n, int x, int y);
+
+
+  void fill_matrix_slice_x(int n, int y, gsl_permutation_struct *p);
+  void fill_matrix_slice_x(int n, int y, int v);
+
+  bool isDerangementWithAbove(int n, int y,  gsl_permutation_struct *p);
+  bool tryDerangement(int i, int n, int x, int y);
 
 //  bool check();
   bool recursiveSolver(int i);
