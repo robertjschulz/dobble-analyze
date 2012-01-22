@@ -387,10 +387,20 @@ bool CMatrixSolver::tryDerangement(int i, int n, int x, int y)
   // an der Stelle n,y die horizontalen Permutationen / durchgehen
   // oBdA V(n,0,y)=y
 
+  bool do_print=false;
+  if( i > best_i )
+    {
+      do_print = true;
+      print(cerr,n);
+    }
+  int trynr=0;
   gsl_permutation_struct *p = gsl_permutation_calloc(m_n-1);
   do {
+      int reason = 0;
+      trynr++;
       fill_matrix_slice_x(n,y, p);
-      if(m_debug) print(cerr,n);
+
+      if(m_debug ) print(cerr,n);
       if(isDerangementWithAbove(n, y, p))
         {
           // more checks...
@@ -400,13 +410,43 @@ bool CMatrixSolver::tryDerangement(int i, int n, int x, int y)
           if ( checkNlineSmall(n,y) )
             {
               // fine! continue to next line!
+              if( i > best_i ) best_i = i;
               ok = recursiveSolver(i + m_n);
               if(ok) return ok;
             }
+          else
+            {
+              reason = 2;
+            }
           // when reaching here: check next permutation!
         }
+      else
+        {
+          reason = 1;
+        }
       // TODO: possibly clean fill_matrix_slice_x !?
-      if(m_debug) fill_matrix_slice_x(n,y, -1);
+      if(m_debug);
+      if( i > best_i )
+        {
+          cerr << "DEBUG: tryDerangement(i=" << i << " -->"
+          << " n=" << n
+          << ", x=" << x
+          << ", y=" << y
+          << ") -- try nr.";
+          cerr.flags ( ios::right  );
+          cerr.width (3);
+          cerr.fill(' ');
+          cerr << trynr;
+          cerr << " line : ";
+          print_matrix_slice_x(cerr, n,y);
+          const char* reasonStr =
+              reason== 1 ? "no derangement"
+                  : reason== 2 ? "checkN"
+                      : "???";
+          cerr << " failed with reason: " << reasonStr
+              << endl;
+        }
+      fill_matrix_slice_x(n,y, -1);
   } while(gsl_permutation_next(p) == GSL_SUCCESS);
   gsl_permutation_free(p);
 
@@ -436,13 +476,15 @@ bool CMatrixSolver::recursiveSolver(int i)
     }
 
   getCoords(i,n,x,y);
-  if(m_debug)
+  if(m_debug || i > best_i)
     {
       cerr << "DEBUG: recursiveSolver(i=" << i << " -->"
           << " n=" << n
           << ", x=" << x
           << ", y=" << y
-          << ")" << endl;
+          << ")"
+          << " best_i=" << best_i
+          << endl;
     }
 
   bool ok = true;
@@ -486,9 +528,15 @@ bool CMatrixSolver::recursiveSolver(int i)
       return ok;
 
     }
+  else if(n==1 && y == 0)
+    {
+      setValue(n, x, y, x);
+      ok = recursiveSolver(i+1);
+      return ok;
+    }
   else
     {
-      if(n==1 )
+      if(false && n==1 && y == 0 )
         {
           // print status
           cerr << "DEBUG: recursiveSolver(i=" << i << " -->"
@@ -512,6 +560,7 @@ void CMatrixSolver::init(int _n)
 {
   m_n = _n;
   max_i = pow(m_n , 3) ;
+  best_i = 0;
   data.clear();
   data.resize(max_i, EMPTY);
   cerr << "DEBUG: init(m_n=" << m_n << ")" << " max_i=" << max_i << endl;
@@ -535,6 +584,17 @@ bool CMatrixSolver::solve(int n)
   return ok;
 }
 
+void CMatrixSolver::print_matrix_slice_x(std::ostream& os, int n, int y)
+{
+  for(int x=0; x<m_n; x++)
+    {
+      os.flags ( ios::right  );
+      os.width (3);
+      os.fill(' ');
+      os << getValue(n,x,y);
+    }
+}
+
 void CMatrixSolver::print(std::ostream& os, int min_n, int max_n)
 {
   for(int N = min_n;  N<= max_n; N++)
@@ -543,13 +603,7 @@ void CMatrixSolver::print(std::ostream& os, int min_n, int max_n)
       os << "N=" << N << endl;
       for( int y=0; y<m_n; y++)
         {
-          for(int x=0; x<m_n; x++)
-            {
-              os.flags ( ios::right  );
-              os.width (3);
-              os.fill(' ');
-              os << getValue(N,x,y);
-            }
+          print_matrix_slice_x(os, N, y);
           os << endl;
         }
     }

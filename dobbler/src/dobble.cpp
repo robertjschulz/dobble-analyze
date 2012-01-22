@@ -37,13 +37,27 @@ void analyze( int n , int k)
 
 
 
-void tryAll(int n, int prework)
+void tryMatrix(int n)
 {
   CDobbleCardSet set(n);
+  int prework = 1;
   for(int pw=1; pw <= prework; pw++)
     {
       set.construct_part(pw);
     }
+
+  set.tryMatrixSolver();
+  if(set.check()) cout << "check passed!" << endl;
+  set.printSummary(cout);
+  set.listCards(cout);
+}
+
+
+
+void tryAll(int n)
+{
+  CDobbleCardSet set(n);
+  set.presetCards();
   set.checkAllCombinations();
 }
 
@@ -219,6 +233,11 @@ int main(int argc, char *argv[])
           else if(cmd=="try-all")
             {
               tryAll(n, prework);
+              exit(EXIT_SUCCESS);
+            }
+          else if(cmd=="try-matrix")
+            {
+              tryMatrix(n);
               exit(EXIT_SUCCESS);
             }
           else if(cmd=="test")

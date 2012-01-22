@@ -70,7 +70,7 @@ public:
 
 int main(int argc, char **argv)
 {
-  CMatrixSolver m;
+  CMatrixSolver matrix;
   int n=5;
   bool nfnd=false;
   int opt;
@@ -94,10 +94,10 @@ int main(int argc, char **argv)
   // time_t started = time(NULL);
 
   //      m.m_debug=true;
-  bool erg = m.solve(n);
+  bool erg = matrix.solve(n);
   if(erg)
     {
-      m.print(cout);
+      matrix.print(cout);
     }
   else
     {

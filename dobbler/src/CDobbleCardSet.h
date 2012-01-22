@@ -55,6 +55,11 @@ public:
     void random();
     void randomByshuffledCards();
     void randomByshuffledCardNumbers();
+    void tryMatrixSolver();
+
+    // set cards that are obviously / oBdA part of the solution
+    void presetCards();
+
 
     int getMatchingSymbol(int j, int i, int m); // helper for construct to recursively get matching symbols
     void construct_part(int j);

@@ -16,6 +16,7 @@
 
 #include "CDobbleCardSet.h"
 #include "CCard.h"
+#include "CMatrixSolver.h"
 
 #include <NTL/ZZ.h>
 
@@ -245,6 +246,11 @@ void CDobbleCardSet::addCardsRecursively(vector<CCard> & all_cards, CCard & card
 // card nr. 13:   2  13  19  25  31  37  43 |    5   5   5   5   5   5
 //
 // j=3 and higher is not yet correct!
+// we expect one card to be obvious:
+//
+// card nr. 14:   3   8  15  22  29  36  43 |    0   1   2   3   4   5
+
+// these constructions are based on the matrix theory
 void CDobbleCardSet::construct_part(int j)
 {
   if(j<1) return;
@@ -260,6 +266,36 @@ void CDobbleCardSet::construct_part(int j)
       }
       return;
     }
+  if(j==2)
+    {
+      for(int i = 0;i < (n - 1);i++)
+        {
+          CCard card;
+          card.add(j);
+          for(int m = 0;m < n - 1;m++)
+            {
+              card.add(2 + (m + 1) * (n - 1) + i);
+          }
+          cards.push_back(card);
+      }
+      return;
+    }
+  if(j==3)
+    {
+      int i = 0;
+        {
+          CCard card;
+          card.add(j);
+          for(int m = 0;m < n - 1;m++)
+            {
+              card.add(2 + (m + 1) * (n - 1) + m);
+          }
+          cards.push_back(card);
+      }
+      return;
+    }
+  assert(false);
+
 
     for(int i = 0;i < (n - 1);i++){
         CCard card;
@@ -563,6 +599,31 @@ void CDobbleCardSet::checkAllCombinations()
   free (c);
 }
 
+void CDobbleCardSet::tryMatrixSolver()
+{
+  CMatrixSolver matrix;
+  cout << "solving with n=" << n << "..." << endl;
+  bool erg = matrix.solve(n-1);
+  if(erg)
+    {
+      for(int _n=0; _n < n-1; _n++)
+        {
+          for(int _y=0; _y < n-1; _y++)
+            {
+              CCard card;
+              card.add(2+_n);
+              for(int _x=0; _x < n-1; _x++)
+                {
+                  int v = matrix.getValue(_n, _x, _y);
+                  int colBase = 2 + (1 + _x) * (n - 1);
+                  card.add(colBase + v);
+                }
+              cards.push_back(card);
+            }
+        }
+    }
+}
+
 void CDobbleCardSet::checkLeftCombinations(gsl_combination_struct *c, bool first)
 {
   int loopnr=1;
@@ -694,6 +755,13 @@ void CDobbleCardSet::randomByshuffledCardNumbers()
 //          int debug = 1;
 //          if (debug) cout << "card " << card << " does not fit!" << endl;
         }
+    }
+}
+
+void CDobbleCardSet::presetCards()
+{
+    for(int pw = 1;pw <= 3;pw++){
+        construct_part(pw);
     }
 }
 

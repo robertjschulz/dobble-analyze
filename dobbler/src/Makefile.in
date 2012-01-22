@@ -49,7 +49,7 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_dobble_OBJECTS = dobble.$(OBJEXT) CDobbleCardSet.$(OBJEXT) \
-	CCard.$(OBJEXT)
+	CMatrixSolver.$(OBJEXT) CCard.$(OBJEXT)
 dobble_OBJECTS = $(am_dobble_OBJECTS)
 dobble_LDADD = $(LDADD)
 am_dtest_OBJECTS = CMatrixSolver.$(OBJEXT) dtest.$(OBJEXT) \
@@ -174,7 +174,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-dobble_SOURCES = dobble.cpp CDobbleCardSet.cpp CCard.cpp  
+dobble_SOURCES = dobble.cpp CDobbleCardSet.cpp CMatrixSolver.cpp CCard.cpp  
 dtest_SOURCES = CMatrixSolver.cpp test/dtest.cpp CPermutation.cpp C
 #DerangementTree.cpp
 AM_LDFLAGS = 

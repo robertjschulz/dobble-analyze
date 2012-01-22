@@ -1,5 +1,5 @@
 bin_PROGRAMS=dobble dtest
-dobble_SOURCES=dobble.cpp CDobbleCardSet.cpp CCard.cpp  
+dobble_SOURCES=dobble.cpp CDobbleCardSet.cpp CMatrixSolver.cpp CCard.cpp  
 dtest_SOURCES=CMatrixSolver.cpp test/dtest.cpp CPermutation.cpp C
 #DerangementTree.cpp
 

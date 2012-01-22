@@ -73,10 +73,15 @@ public:
 
   void print(std::ostream& o, int max_n=-1);
   void print(std::ostream& o, int min_n, int max_n);
+  void print_matrix_slice_x(std::ostream& os, int n, int y);
+
   bool m_debug;
+
+  int getValue(int N, int x, int y);
 
 private:
   int m_n, max_i;
+  int best_i;
   std::vector<int> data;
 
   // will get m_n entries each for one n-plane which each gets
@@ -91,7 +96,6 @@ private:
   size_t getIndex(int N, int x, int y);
   void getCoords(int index, int & n, int & x, int & y);
 
-  int getValue(int N, int x, int y);
   void setValue(int N, int x, int y, int v);
 
   bool checkNline(int n, int y);
