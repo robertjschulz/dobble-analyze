@@ -1,0 +1,19 @@
+summary for n[21] k[5]  used symbols   : 21/21 number of cards: 18 check: 1
+card nr.  1:   1   2   3   4   5 | 
+card nr.  2:   1   6   7   8   9 | 
+card nr.  3:   1  10  11  12  13 | 
+card nr.  4:   1  14  15  16  17 | 
+card nr.  5:   1  18  19  20  21 | 
+card nr.  6:   2   6  10  14  18 |    0   0   0   0
+card nr.  7:   2   7  11  15  19 |    1   1   1   1
+card nr.  8:   2   8  12  16  20 |    2   2   2   2
+card nr.  9:   2   9  13  17  21 |    3   3   3   3
+card nr. 10:   3   6  11  17  20 |    0   1   3   2
+card nr. 11:   3   8  13  15  18 |    2   3   1   0
+card nr. 12:   3   9  12  14  19 |    3   2   0   1
+card nr. 13:   4   6  13  16  19 |    0   3   2   1
+card nr. 14:   4   7  12  17  18 |    1   2   3   0
+card nr. 15:   4   9  10  15  20 |    3   0   1   2
+card nr. 16:   5   7  13  14  20 |    1   3   0   2
+card nr. 17:   5   8  10  17  19 |    2   0   3   1
+card nr. 18:   5   9  11  16  18 |    3   1   2   0
