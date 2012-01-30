@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
             }
           else if(cmd=="try-all")
             {
-              tryAll(n, prework);
+              tryAll(n);
               exit(EXIT_SUCCESS);
             }
           else if(cmd=="try-matrix")

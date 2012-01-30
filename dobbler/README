@@ -1,5 +1,10 @@
 Sample readme file for dobbler project.
 
+required packets:
+
+OpenSuSE 12.2:
+sudo zypper addrepo http://download.opensuse.org/repositories/science/openSUSE_12.1 science/openSUSE_12.1
+sudo zypper install libntl0 ntl-devel gsl-dvel
 
 initializing the workspace....
 
@@ -12,3 +17,48 @@ $ ./configure
 
 
 (see: http://askubuntu.com/questions/27677/cannot-find-install-sh-install-sh-or-shtool-in-ac-aux )
+
+
+Simple test-run:
+
+ivr@schulz:~/projekte/dobble-analyze/dobbler> src/dobble -n 3 try-matrix
+option n with value '3'
+non-option ARGV-elements: try-matrix 
+solving with n=3...
+DEBUG: init(m_n=2) max_i=8
+DEBUG: recursiveSolver(i=1 --> n=0, x=1, y=0) best_i=0
+DEBUG: recursiveSolver(i=2 --> n=0, x=0, y=1) best_i=0
+DEBUG: recursiveSolver(i=3 --> n=0, x=1, y=1) best_i=0
+DEBUG: recursiveSolver(i=4 --> n=1, x=0, y=0) best_i=0
+DEBUG: recursiveSolver(i=5 --> n=1, x=1, y=0) best_i=0
+DEBUG: recursiveSolver(i=6 --> n=1, x=0, y=1) best_i=0
+
+N=0
+  0  0
+  1  1
+
+N=1
+  0  1
+ -1 -1
+end of iteration(i==max_i): ok=true
+check passed!
+summary for n[7] k[3]  used symbols   : 7/7 number of cards: 7 check: 1
+card nr.  1:   1   2   3
+card nr.  2:   1   4   5
+card nr.  3:   1   6   7
+card nr.  4:   2   4   6
+card nr.  5:   2   5   7
+card nr.  6:   3   4   7
+card nr.  7:   3   5   6
+
+
+
+============================================================
+Running the "Koenigsdisziplin" :
+
+ivr@schulz:~/projekte/dobble-analyze/dobbler> src/dobble -n 8 try-matrix
+
+src/dobble -n 8 try-matrix > otto 2>&1
+
+
+
