@@ -1,0 +1,10 @@
+dobbler/Makefile
+dobble-test/Debug
+dobbler/config.log
+*.o
+*~
+pubkey
+.~*#
+configure.scan
+autoscan.log
+
